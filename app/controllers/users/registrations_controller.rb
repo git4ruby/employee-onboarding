@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
+  include RackSessionFix
+  before_action :configure_permitted_parameters
   respond_to :json
 
   private
@@ -17,5 +19,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
       }, status: :unprocessable_entity
     end
   end
-  
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:first_name, :last_name, :phone_number, :email, :address])
+  end
+
 end
