@@ -9,6 +9,12 @@ class User < ApplicationRecord
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
   VALID_PHONE_REGEX = /\A(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\z/
 
+  has_many :user_roles, dependent: :destroy
+  has_many :roles, through: :user_roles
+
+  attr_accessor :role_ids
+
+
   validates :email, presence: true, format: { with: VALID_EMAIL_REGEX, message: "Invalid Email"}, uniqueness: true
   validates :phone_number, presence: true, format: { with: VALID_PHONE_REGEX, message: "Invalid Phone"}, uniqueness: true
 
@@ -19,5 +25,10 @@ class User < ApplicationRecord
   # Make sure first name and last name are present and unique.
   validates_presence_of     :first_name
   validates_presence_of     :last_name
+
+  def is_admin?
+    roles.exists?(name: Role::ADMIN)
+  end
+
 
 end
