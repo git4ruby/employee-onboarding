@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   resources :roles
+  resources :documents
   
   get '/current_user', to: 'current_user#index'
   devise_for :users, path: '', path_names: {

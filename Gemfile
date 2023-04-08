@@ -43,6 +43,11 @@ gem 'devise'
 gem 'devise-jwt'
 gem 'jsonapi-serializer'
 gem 'pry'
+gem 'carrierwave', '~> 2.2', '>= 2.2.3'
+
+gem 'bootstrap-sass', '~> 3.4', '>= 3.4.1'
+
+gem 'jquery-rails'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
