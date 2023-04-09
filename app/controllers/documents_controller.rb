@@ -1,6 +1,12 @@
 class DocumentsController < ApplicationController
+  before_action :authenticate_user!
+
   def index
-    @documents = Document.all
+    if current_user.is_admin?
+      @documents = Document.all
+    else
+      @documents = Document.all.where(user_id: current_user.id)
+    end
   end
 
   def new
@@ -9,7 +15,6 @@ class DocumentsController < ApplicationController
 
   def create
     @document = Document.new(document_params)
-    @document.user_id = 1
     if @document.save
       redirect_to documents_path, notice: "The document #{@document.name} has been uploaded."
     else
