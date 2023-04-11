@@ -1,5 +1,6 @@
 class DocumentsController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_document, only: [:show, :update, :destroy]
 
   def index
     if current_user.is_admin?
@@ -7,29 +8,47 @@ class DocumentsController < ApplicationController
     else
       @documents = Document.all.where(user_id: current_user.id)
     end
+    render json: {
+      documents: @documents
+    }
   end
 
-  def new
-    @document = Document.new
+  def show
+    render json: @document
   end
 
   def create
     @document = Document.new(document_params)
+    @document.user_id = current_user.id
+    binding.pry
     if @document.save
-      redirect_to documents_path, notice: "The document #{@document.name} has been uploaded."
+      render json: {
+        status: 200,
+        message: "#{@document.name} Document saved successfully"
+      }, status: :created, location: @document
     else
-      render "new"
+      render json: @document.errors, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    if @document.update(document_params)
+      render json: @document
+    else
+      render json: @document.errors, status: :unprocessable_entity
     end
   end
 
   def destroy
-    @document = Document.find(params[:id])
     @document.destroy
-    redirect_to documents_path, notice:  "The document #{@document.name} has been deleted."
   end
 
   private
     def document_params
-      params.require(:document).permit(:name, :attachment, :user_id)
+      params.permit(:name, :attachment)
+    end
+
+    def set_document
+      @document = Document.find(params[:id])
     end
 end
